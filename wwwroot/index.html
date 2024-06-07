@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework0506</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Current Weather</h1>
+        <div class="search">
+            <input type="text" id="cityInput" placeholder="Enter city name">
+            <button onclick="getWeather()">Search</button>
+        </div>
+        <div id="weatherContainer">
+            <div id="currentWeather" class="weather-section">
+            </div>
+            <div id="hourlyWeather" class="hourly-container">
+            </div>
+        </div>
+        <div id="errorContainer" class="error-message">
+        </div>
+    </div>
+    <script>
+        async function getWeather() {
+            const city = document.getElementById('cityInput').value;
+            const currentWeatherDiv = document.getElementById('currentWeather');
+            const hourlyWeatherDiv = document.getElementById('hourlyWeather');
+            const errorContainer = document.getElementById('errorContainer');
+
+            currentWeatherDiv.innerHTML = '';
+            hourlyWeatherDiv.innerHTML = '';
+            errorContainer.innerHTML = '';
+
+            try {
+                const response = await fetch(`/weather?city=${city}`);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('City not found');
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                }
+                const data = await response.json();
+
+                currentWeatherDiv.innerHTML = `
+                        <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="weather icon">
+                        <div class="weather-details">
+                            <h2>${data.name}</h2>
+                            <p>${new Date().toLocaleDateString()}</p>
+                            <p>${data.weather[0].description}</p>
+                            <p>Current Temperature: ${data.main.temp}°C</p>
+                            <p>Min Temperature: ${data.main.temp_min}°C</p>
+                            <p>Max Temperature: ${data.main.temp_max}°C</p>
+                            <p>Wind Speed: ${data.wind.speed} km/h</p>
+                        </div>
+                        <div class="weather-summary">
+                            <p>Min temperature: ${data.main.temp_min}°C</p>
+                            <p>Max temperature: ${data.main.temp_max}°C</p>
+                            <p>Wind speed: ${data.wind.speed} km/h</p>
+                        </div>
+                    `;
+
+                const hourlyWeatherHtml = `
+                        <div class="hourly-forecast">
+                            <p>Time: 07:00</p>
+                            <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="weather icon">
+                            <p>${data.weather[0].description}</p>
+                            <p>Temp: ${data.main.temp}°C</p>
+                            <p>Wind: ${data.wind.speed} km/h</p>
+                        </div>
+                        <div class="hourly-forecast">
+                            <p>Time: 10:00</p>
+                            <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="weather icon">
+                            <p>${data.weather[0].description}</p>
+                            <p>Temp: ${data.main.temp + 1}°C</p>
+                            <p>Wind: ${data.wind.speed + 1} km/h</p>
+                        </div>
+                        <div class="hourly-forecast">
+                            <p>Time: 13:00</p>
+                            <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="weather icon">
+                            <p>${data.weather[0].description}</p>
+                            <p>Temp: ${data.main.temp + 2}°C</p>
+                            <p>Wind: ${data.wind.speed + 2} km/h</p>
+                        </div>
+                        <div class="hourly-forecast">
+                            <p>Time: 15:00</p>
+                            <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="weather icon">
+                            <p>${data.weather[0].description}</p>
+                            <p>Temp: ${data.main.temp + 3}°C</p>
+                            <p>Wind: ${data.wind.speed + 3} km/h</p>
+                        </div>
+                        <div class="hourly-forecast">
+                            <p>Time: 18:00</p>
+                            <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="weather icon">
+                            <p>${data.weather[0].description}</p>
+                            <p>Temp: ${data.main.temp + 4}°C</p>
+                            <p>Wind: ${data.wind.speed + 4} km/h</p>
+                        </div>
+                        <div class="hourly-forecast">
+                            <p>Time: 21:00</p>
+                            <img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="weather icon">
+                            <p>${data.weather[0].description}</p>
+                            <p>Temp: ${data.main.temp + 5}°C</p>
+                            <p>Wind: ${data.wind.speed + 5} km/h</p>
+                        </div>
+                    `;
+                hourlyWeatherDiv.innerHTML = hourlyWeatherHtml;
+            } catch (error) {
+                console.error('Fetch error: ', error);
+                errorContainer.innerHTML = `
+                        <div class="error-message">
+                            <h2>404</h2>
+                            <p>NOT FOUND</p>
+                            <p>Please enter a different city</p>
+                        </div>
+                    `;
+            }
+        }
+    </script>
+</body>
+</html>
